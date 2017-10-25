@@ -1,0 +1,18 @@
+# Toggle line numbering
+hook global WinCreate .* %(
+    addhl number_lines
+    addhl wrap
+	addhl show_matching
+)
+# Allow to paste things copied at an other place
+map global user P '!xsel --output --clipboard<ret>'
+map global user p '<a-!>xsel --output --clipboard<ret>'
+# Allows selection indent
+map global normal <tab> '<a-;><gt>'
+map global normal <backtab> '<a-;><lt>'
+# Commenting area
+map global normal '#' :comment-line<ret> -docstring 'comment line'
+map global normal '<a-#>' :comment-block<ret> -docstring 'comment block'
+
+set global tabstop 4
+set global indentwidth 4

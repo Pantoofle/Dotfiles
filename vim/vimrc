@@ -1,0 +1,159 @@
+function! Tab_Or_Complete()
+  if col('.')>1 && strpart( getline('.'), col('.')-2, 3) =~ '^\w'
+    return "\<C-N>"
+  else
+    return "\<Tab>"
+  endif
+endfunction
+:inoremap <Tab> <C-R>=Tab_Or_Complete()<CR>
+
+" ----- Tables toggling --------
+function! s:isAtStartOfLine(mapping)
+  let text_before_cursor = getline('.')[0 : col('.')-1]
+  let mapping_pattern = '\V' . escape(a:mapping, '\')
+  let comment_pattern = '\V' . escape(substitute(&l:commentstring, '%s.*$', '', ''), '\')
+  return (text_before_cursor =~? '^' . ('\v(' . comment_pattern . '\v)?') . '\s*\v' . mapping_pattern . '\v$')
+endfunction
+
+inoreabbrev <expr> <bar><bar>
+          \ <SID>isAtStartOfLine('\|\|') ?
+          \ '<c-o>:TableModeEnable<cr><bar><space><bar><left><left>' : '<bar><bar>'
+inoreabbrev <expr> __
+          \ <SID>isAtStartOfLine('__') ?
+          \ '<c-o>:silent! TableModeDisable<cr>' : '__'
+" -------------------------------------------------------
+
+let mapleader = ','
+imap <leader><PageDown> <ESC>:bn<CR>
+map <leader><PageDown> :bn<CR>
+imap <leader><PageUp> <ESC>:bp<CR>
+map <leader><PageUp> :bp<CR>
+imap <leader><Down> <ESC>:wincmd j<CR>
+map <leader><Down> :wincmd j<CR>
+imap <leader><Up> <ESC>:wincmd k<CR>
+map <leader><Up> :wincmd k<CR>
+imap <leader><Right> <ESC>:wincmd l<CR>
+map <leader><Right> :wincmd l<CR>
+imap <leader><Left> <ESC>:wincmd h<CR> 
+map <leader><Left> :wincmd h<CR> 
+imap <leader>k <ESC>:bd<CR>
+map <leader>k :bd<CR>
+
+map <f9> :make<CR>
+map <F7> mzgg=G`z
+
+set clipboard=unnamedplus
+
+vmap <C-c> "+yi
+vmap <C-x> "+c
+vmap <C-v> c<ESC>"+p
+imap <C-v> <C-r><C-o>+
+
+noremap <C-h> <C-w>h
+noremap <C-j> <C-w>j
+noremap <C-k> <C-w>k
+noremap <C-l> <C-w>l
+
+syntax enable
+colorscheme monokai
+
+call pathogen#infect()
+
+syntax on
+filetype off
+filetype plugin indent on
+
+set nocompatible
+set novisualbell
+
+set nobackup
+set nowritebackup
+set noswapfile
+
+set modelines=0
+
+set number
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set expandtab
+
+set encoding=utf-8
+set scrolloff=5
+set autoindent smartindent
+set showmode
+set hidden
+set wildmenu
+set wildchar=<TAB>
+set wildmode=list:longest
+set cursorline
+set ttyfast
+set ruler
+set backspace=indent,eol,start
+set nostartofline 
+set laststatus=2
+set ttimeoutlen=10
+
+"-------------- Tabularize -----------------
+noremap <silent> <leader>t: :Tabularize /:<CR>
+noremap <silent> <leader>t= :Tabularize /=<CR>
+noremap <silent> <leader>t, :Tabularize /,<CR>
+noremap <silent> <leader>t{ :Tabularize /{<CR>
+noremap <silent> <leader>t" :Tabularize /"<CR>
+noremap <silent> <leader>t' :Tabularize /'<CR>
+noremap <silent> <leader>t[ :Tabularize /[<CR>
+noremap <silent> <leader>t/ :Tabularize ///<CR>
+noremap <silent> <leader>t\| :Tabularize /\|<CR>
+
+let g:vimtex_view_general_viewer = 'evince'
+
+" REQUIRED. This makes vim invoke Latex-Suite when you open a tex file.
+filetype plugin on
+
+" IMPORTANT: grep will sometimes skip displaying the file name if you
+" search in a singe file. This will confuse Latex-Suite. Set your grep
+" program to always generate a file-name.
+set grepprg=grep\ -nH\ $*
+
+" OPTIONAL: This enables automatic indentation as you type.
+filetype indent on
+
+nmap <leader>b :NERDTreeFind<CR>
+nmap <leader>n :NERDTreeToggle<CR>
+
+set cmdheight=1
+
+" NERD Comenter
+" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+" Use compact syntax for prettified multi-line comments
+let g:NERDCompactSexyComs = 1
+
+" Align line-wise comment delimiters flush left instead of following code indentation
+let g:NERDDefaultAlign = 'left'
+" Allow commenting and inverting empty lines (useful when commenting a region)
+let g:NERDCommentEmptyLines = 1
+" Enable trimming of trailing whitespace when uncommenting
+let g:NERDTrimTrailingWhitespace = 1
+
+
+" OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
+" 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
+" The following changes the default filetype back to 'tex':
+let g:tex_flavor='latex'
+let g:vim_markdown_folding_disabled = 1
+let g:airline_symbols_ascii = 1
+let g:airline_section_warning=""
+let g:airline#extensions#tabline#enabled = 1
+
+set runtimepath^=~/.vim/bundle/ctrlp.vim
+if executable('ag')
+  " Use Ag over Grep
+  set grepprg=ag\ --nogroup\ --nocolor
+
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+endif
+
+au BufRead,BufNewFile *.g set filetype=antlr3
+au BufRead,BufNewFile *.g4 set filetype=antlr4

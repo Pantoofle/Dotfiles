@@ -1,0 +1,1 @@
+../../kakoune-extra/syntastic.kak

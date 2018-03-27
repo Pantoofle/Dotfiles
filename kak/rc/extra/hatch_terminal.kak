@@ -1,0 +1,1 @@
+../../kakoune-extra/hatch_terminal.kak

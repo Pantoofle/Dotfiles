@@ -1,0 +1,75 @@
+= Registers
+
+== Description
+
+Registers are named lists of text -instead of simply text- in order to interact
+well with multiselection. They are used for various purposes, like storing
+the last yanked text, or the captured groups associated with the selections.
+
+== Interacting
+
+*<c-r><c>*::
+    when in insert mode or in a prompt, insert the value stored in the
+    *c* register (single character)
+
+*"<c>*::
+    in normal mode, select the *<c>* register (single character)
+
+== Alternate names
+
+Non alphanumeric registers have an alternative name that can be used
+in contexts where only alphanumeric identifiers are possible.
+
+== Default registers
+
+Most commands using a register default to a specific one if not specified:
+
+*"* (dquote)::
+    default copy register, used by yanking and pasting commands like *y*, *p*
+    and *R*
+
+*/* (slash)::
+    default search register, used by regex based commands like *s*, ***
+    or */*
+
+*@* (arobase)::
+    default macro register, used by *q* and *Q*
+
+*^* (caret)::
+    default mark register, used by *z* and *Z*
+
+*|* (pipe)::
+    default shell command register, used by command that spawn a subshell such as
+    *|*, *<a-|>*, *!* or *<a-!>*
+
+== Special registers
+
+Some registers are not general purposes, they cannot be written to, but they
+contain some special data
+
+*%* (percent)::
+    current buffer name
+
+*.* (dot)::
+    current selection contents
+
+*#* (hash)::
+    selection indices (first selection has 1, second has 2, ...)
+
+*_* (underscore)::
+    null register, always empty
+
+*:* (colon)::
+    last entered command
+
+== Integer registers
+
+Registers *1* to *9* hold the grouped sub-matches of the regular
+expression used to make the last selection. Example: applying the
+following regular expression to the date of the day would put the day of
+the week in register *1*, the month in register *2*, and the day of the
+month in register *3*, but select the entire date:
+
+--------------------
+(\w+) (\w+) (\d+) .+
+--------------------

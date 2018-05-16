@@ -50,4 +50,5 @@ set global ui_options ncurses_assistant=none
 	proj_dir=$(git rev-parse --show-toplevel)
     echo try %{ source ${proj_dir}/.kakbis.kak }
     echo try %{ source .kakbis.kak }
+    echo try %{ source .kakrc.kak }
 }

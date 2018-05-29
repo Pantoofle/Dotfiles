@@ -1,0 +1,3 @@
+[submodule "kak/kakoune-extra"]
+	path = kak/kakoune-extra
+	url = git@github.com:lenormf/kakoune-extra.git

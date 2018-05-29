@@ -1,1 +1,0 @@
-../../kakoune-extra/widgets/percent.kak

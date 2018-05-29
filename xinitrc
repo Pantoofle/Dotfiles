@@ -7,7 +7,7 @@ sysmodmap=/etc/X11/xinit/.Xmodmap
 
 # merge in defaults and keymaps
 
-setxkbmap fr bepo  -option lv3:ralt_switch  -option caps:swapescape &
+setxkbmap fr bepo  -option lv3:escape  -option caps:swapescape &
 
 if [ -f $sysresources ]; then
     xrdb -merge $sysresources
@@ -36,17 +36,19 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
 fi
 
 xsetroot -cursor_name left_ptr &
-xmodmap ~/.Xmodmap
 
-xmodmap -e "keycode 66=Hankaku"
+setxkbmap fr bepo  -option lv3:ralt_switch -option caps:swapescape
+xmodmap -e "keycode 66=Hankaku Hankaku Hankaku Hankaku Hankaku Hankaku"
+xmodmap -e "clear Mod5"
 xmodmap -e "add Mod5 = Hankaku"
 xmodmap -e "keycode any=Escape"
+
 xcape -e "Hankaku=Escape"
 
-xmodmap -e "keycode 44 = t T t T h H"
-xmodmap -e "keycode 45 = s S s S j J"
-xmodmap -e "keycode 46 = r R r R k K"
-xmodmap -e "keycode 47 = n N n N l L"
+xmodmap -e "keycode 44 = t T t T h H t T"
+xmodmap -e "keycode 45 = s S s S j J s S"
+xmodmap -e "keycode 46 = r R r R k K r R"
+xmodmap -e "keycode 47 = n N n N l L n N"
 
 # Redshift
 pgrep redshift &> /dev/null || redshift &> /dev/null &

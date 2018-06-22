@@ -3,7 +3,13 @@ addhl global number_lines
 addhl global wrap
 addhl global show_matching
 
+# Color the 80th character : line too long !
+hook global WinCreate .* %{addhl global regex ^\V{80}(\V) 1:Error}
+
 colorscheme desertex
+
+# Quick way to save-quit
+map global user q :wq<ret>
 
 # Allow to paste things copied at an other place
 map global user P '!xsel --output --clipboard<ret>'
@@ -16,7 +22,7 @@ map global normal <s-tab> '<a-;><lt>'
 
 # Commenting area
 map global normal '#' :comment-line<ret> -docstring 'comment line'
-map global normal '<a-#>' :comment-block<ret> -docstring 'comment block'
+map global normal '<a-$>' :comment-block<ret> -docstring 'comment block'
 
 # Default format
 set global tabstop 4
@@ -26,6 +32,23 @@ set global ui_options ncurses_assistant=none
 
 # Aliases
 alias global term hatch-terminal-x11
+
+# Toggle git diff by default
+hook global WinCreate .* %{ git show-diff }
+hook global BufWritePost .* %{ git update-diff }
+
+# Ctags user shortcuts
+map global user s ':ctags-search<ret>'
+map global user i ':ctags-funcinfo<ret>'
+
+# Start kak-lsp
+%sh{~/projets/kak-lsp/target/release/kak-lsp --kakoune -s $kak_session}
+lsp-start
+lsp-stop-on-exit-enable
+
+lsp-auto-hover-enable
+map global goto r :lsp-references<ret> -docstring 'references'
+map global goto D :lsp-diagnostics<ret> -docstring 'diagnostic'
 
 # Creates the status line
 %sh{

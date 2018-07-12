@@ -1,6 +1,3 @@
-[submodule "kak/kakoune-extra"]
-	path = kak/kakoune-extra
-	url = git@github.com:Pantoofle/kakoune-extra.git
 [submodule "kak/modules/kakoune-find"]
 	path = kak/modules/kakoune-find
 	url = https://github.com/occivink/kakoune-find.git

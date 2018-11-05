@@ -1,57 +1,101 @@
-# Toggle line numbering
-addhl global/ number-lines
-addhl global/ wrap
-addhl global/ show-matching
+##########################################
+############## Color Scheme ##############
 
 colorscheme desertex
 
+##########################################
+############# Format Options ############# 
+
+# Toggle line numbering
+addhl global/ number-lines -relative -hlcursor
+# Wrap lines at the end of the window
+addhl global/ wrap
+# Show the matching parenthesis pair
+addhl global/ show-matching
+
+# Default tabs format
+set global tabstop 4
+set global indentwidth 4
+
+# Default autowrap size
+set global autowrap_column 80
+
+# Turn off Clippy
+set global ui_options ncurses_assistant=none
+
+# Syntastic option
+# set global syntastic_autoformat true
+
+#########################################
+################ Aliases ################
+
+# Spawn a terminal
+alias global term hatch-terminal-x11
+
+# Prepare IDE
+def ide %{
+    rename-client main
+    set global jumpclient main
+
+    new rename-client tools
+    set global toolsclient tools
+}
+
+def hard_wrap_selection %{
+    exec "|fmt -w %opt{autowrap_column} -g %opt{autowrap_column} -c<ret>"
+}
+
+#########################################
+########## Custom Key Bindings ##########
+
 # Quick way to save-quit
-map global user q :wq<ret>
+map global user q :wq<ret> -docstring "save and quit"
 
 # Allow to paste things copied at an other place
-map global user P '<a-!>xsel --output --primary<ret>'
-map global user p '<a-!>xsel --output --clipboard<ret>'
-map global user y '<a-|> xsel --input --clipboard <ret>'
-map global user Y '<a-|> xsel --input --primary <ret>'
+map global user P '<a-!>xsel --output --primary<ret>' -docstring "paste primary buffer"
+map global user p '<a-!>xsel --output --clipboard<ret>' -docstring "paste clipboard buffer"
+map global user Y '<a-|> xsel --input --primary <ret>' -docstring "yank primary buffer"
+map global user y '<a-|> xsel --input --clipboard <ret>' -docstring "yank clipboard buffer"
 
 # Allows selection indent
-map global normal <tab> '<a-;><gt>'
-map global normal <s-tab> '<a-;><lt>'
+map global normal <tab> '<a-;><gt>' -docstring "indent selection"
+map global normal <s-tab> '<a-;><lt>' -docstring "unindent selection"
 
 # Commenting area
 map global normal '#' :comment-line<ret> -docstring 'comment line'
 map global normal '<a-$>' :comment-block<ret> -docstring 'comment block'
 
-# Default format
-set global tabstop 4
-set global indentwidth 4
-set global ui_options ncurses_assistant=none
-# set global syntastic_autoformat true
+# Autowrap area
+map global user f :hard_wrap_selection<ret> -docstring "hardwrap current selection"
+
+# Ctags user shortcuts
+map global user s ':ctags-search<ret>' -docstring "search for ctags"
+map global user i ':ctags-funcinfo<ret>' -docstring "search for funciton info"
+
+#########################################
+################# Hooks #################
 
 # Auto replace tabs with spaces
 hook global InsertChar \t %{ try %{
     execute-keys -draft h %opt{indentwidth}@
 } }
 
-# Aliases
-alias global term hatch-terminal-x11
-
 # Toggle git diff by default
 hook global WinCreate .* %{ git show-diff }
 hook global BufWritePost .* %{ git update-diff }
 
-# Ctags user shortcuts
-map global user s ':ctags-search<ret>'
-map global user i ':ctags-funcinfo<ret>'
+# Remove trailing whitespaces
+hook global BufWritePre .* %{ try %{ execute-keys -draft '%s[\h\v]+$<ret><a-d>'} }
+
+#########################################
+################ Kak-LSP ################
 
 # Start kak-lsp
 eval %sh{kak-lsp --kakoune -s $kak_session}
-lsp-start
-lsp-stop-on-exit-enable
+nop %sh{ (kak-lsp -s $kak_session -vvv ) > /tmp/kak-lsp.log 2>&1 < /dev/null & }
 
-lsp-auto-hover-enable
-map global goto r :lsp-references<ret> -docstring 'references'
-map global goto D :lsp-diagnostics<ret> -docstring 'diagnostic'
+###########################################
+############### Status Line ############### 
 
 # Creates the status line
 eval %sh{
@@ -63,7 +107,7 @@ eval %sh{
     	"%opt{modeline_git_branch}"
     	"%val{client}@[%val{session}]"
     	)
-	
+
     fmt_line=""
 
     for t in "${tools[@]}"; do
@@ -74,10 +118,12 @@ eval %sh{
     echo set global modelinefmt "'${fmt_line}'"
 }
 
+############################################
+############## Custom Configs ##############
 # Load the custom kakrc
 eval %sh{
 	proj_dir=$(git rev-parse --show-toplevel)
-    echo try %{ source ${proj_dir}/.kakbis.kak }
-    echo try %{ source .kakbis.kak }
-    echo try %{ source .kakrc.kak }
+  echo try %{ source ${proj_dir}/.kakbis.kak }
+  echo try %{ source .kakbis.kak }
+  echo try %{ source .kakrc.kak }
 }

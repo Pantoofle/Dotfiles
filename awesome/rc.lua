@@ -76,15 +76,17 @@ local themes = {
 local chosen_theme = themes[7]
 local modkey       = "Mod4"
 local altkey       = "Mod1"
-local terminal     = "urxvt"
+local terminal     = "urxvt -e /bin/fish"
 local editor       = os.getenv("EDITOR") or "kak"
 local gui_editor   = "kak"
 local browser      = "firefox"
 local guieditor    = "kak"
 local scrlocker    = "/usr/local/i3lock-fancy/lock -f Source-Code-Pro-for-Powerline"
+local screenshot   = "maim -s > ~/Images/Screenshots/$(date +%F_%H-%M).png"
+
 
 awful.util.terminal = terminal
-awful.util.tagnames = { "♫", "i", "✉", "☯", "X", "6", "7", "8", "9" }
+awful.util.tagnames = { "1", "2", "3", "4", "5", "6", "7", "8", "9" }
 awful.layout.layouts = {
     awful.layout.suit.floating,
     awful.layout.suit.tile,
@@ -226,7 +228,7 @@ root.buttons(my_table.join(
 globalkeys = my_table.join(
     -- Take a screenshot
     -- https://github.com/lcpz/dots/blob/master/bin/screenshot
-    awful.key({ altkey }, "p", function() os.execute("screenshot") end,
+    awful.key({ altkey }, "p", function() os.execute(screenshot) end,
               {description = "take a screenshot", group = "hotkeys"}),
 
     -- X screen locker
@@ -484,7 +486,7 @@ globalkeys = my_table.join(
 	-- Switch keyboard layout
     awful.key({ modkey }, "$", function () os.execute("~/Scripts/switch_kb_layout.sh") end,
               {description = "switch keyboart layout", group = "hotkeys"}),
-	
+
     -- Default
     --[[ Menubar
     awful.key({ modkey }, "p", function() menubar.show() end,

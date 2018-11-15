@@ -4,6 +4,38 @@
 colorscheme desertex
 
 ##########################################
+############## Load pluggins #############
+
+# Plug
+source "%val{config}/plugins/plug.kak/rc/plug.kak"
+
+plug "andreyorst/plug.kak" noload
+plug "lenormf/kakoune-extra" load %{
+    cdmenu.kak
+    comnotes.kak
+    dictcomplete.kak
+    fzf.kak
+    grepmenu.kak
+    hatch_terminal.kak
+    idsession.kak
+    lineindent.kak
+    syntastic.kak
+    tldr.kak
+    utils.kak
+    # filetype
+    git.kak
+    mutt.kak
+    pkgbuild.kak
+    # widgets
+    git-branch.kak
+    percent.kak
+}
+
+
+plug "alexherbo2/auto-pairs.kak"
+plug "occivink/kakoune-gdb"
+
+##########################################
 ############# Format Options ############# 
 
 # Toggle line numbering
@@ -69,8 +101,12 @@ map global normal '<a-$>' :comment-block<ret> -docstring 'comment block'
 map global user f :hard_wrap_selection<ret> -docstring "hardwrap current selection"
 
 # Ctags user shortcuts
-map global user s ':ctags-search<ret>' -docstring "search for ctags"
+map global user t ':ctags-search<ret>' -docstring "search for ctags"
 map global user i ':ctags-funcinfo<ret>' -docstring "search for funciton info"
+
+# Surround pairs
+map global user s -docstring 'Surround' ':<space>auto-pairs-surround<ret>'
+map global user S -docstring 'Surround++' ':<space>auto-pairs-surround _ _ * *<ret>'
 
 #########################################
 ################# Hooks #################
@@ -86,6 +122,9 @@ hook global BufWritePost .* %{ git update-diff }
 
 # Remove trailing whitespaces
 hook global BufWritePre .* %{ try %{ execute-keys -draft '%s[\h\v]+$<ret><a-d>'} }
+
+# Match pairs
+hook global WinCreate .* %{ auto-pairs-enable }
 
 #########################################
 ################ Kak-LSP ################
@@ -122,8 +161,10 @@ eval %sh{
 ############## Custom Configs ##############
 # Load the custom kakrc
 eval %sh{
-	proj_dir=$(git rev-parse --show-toplevel)
-  echo try %{ source ${proj_dir}/.kakbis.kak }
-  echo try %{ source .kakbis.kak }
-  echo try %{ source .kakrc.kak }
+    proj_dir=$(git rev-parse --show-toplevel 2> /dev/null)
+    if [ -n "${proj_dir}" ]; then
+        echo try %{ source ${proj_dir}/.kakbis.kak }
+    fi
+    echo try %{ source .kakbis.kak }
+    echo try %{ source .kakrc.kak }
 }

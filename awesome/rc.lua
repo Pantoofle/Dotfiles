@@ -76,12 +76,12 @@ local themes = {
 local chosen_theme = themes[7]
 local modkey       = "Mod4"
 local altkey       = "Mod1"
-local terminal     = "urxvt -e /bin/fish"
+local terminal     = "kitty"
 local editor       = os.getenv("EDITOR") or "kak"
 local gui_editor   = "kak"
 local browser      = "firefox"
 local guieditor    = "kak"
-local scrlocker    = "/usr/local/i3lock-fancy/lock -f Source-Code-Pro-for-Powerline"
+local scrlocker    = "i3lock -c 000000 -f Source-Code-Pro-for-Powerline"
 local screenshot   = "maim -s > ~/Images/Screenshots/$(date +%F_%H-%M).png"
 
 
@@ -399,37 +399,52 @@ globalkeys = my_table.join(
     awful.key({ }, "XF86MonBrightnessDown", function () awful.util.spawn("xbacklight -dec 10") end,
               {description = "-10%", group = "hotkeys"}),
 
-    -- ALSA volume control
-    awful.key({ altkey }, "Up",
-        function ()
-            os.execute(string.format("amixer -q set %s 1%%+", beautiful.volume.channel))
-            beautiful.volume.update()
-        end,
-        {description = "volume up", group = "hotkeys"}),
-    awful.key({ altkey }, "Down",
-        function ()
-            os.execute(string.format("amixer -q set %s 1%%-", beautiful.volume.channel))
-            beautiful.volume.update()
-        end,
-        {description = "volume down", group = "hotkeys"}),
-    awful.key({ altkey }, "m",
-        function ()
-            os.execute(string.format("amixer -q set %s toggle", beautiful.volume.togglechannel or beautiful.volume.channel))
-            beautiful.volume.update()
-        end,
-        {description = "toggle mute", group = "hotkeys"}),
-    awful.key({ altkey, "Control" }, "m",
-        function ()
-            os.execute(string.format("amixer -q set %s 100%%", beautiful.volume.channel))
-            beautiful.volume.update()
-        end,
-        {description = "volume 100%", group = "hotkeys"}),
-    awful.key({ altkey, "Control" }, "0",
-        function ()
-            os.execute(string.format("amixer -q set %s 0%%", beautiful.volume.channel))
-            beautiful.volume.update()
-        end,
-        {description = "volume 0%", group = "hotkeys"}),
+
+
+   -- Volume Keys
+   awful.key({}, "XF86AudioLowerVolume", function ()
+     awful.util.spawn("amixer -q -D pulse sset Master 5%-", false)
+     beautiful.volume.update()
+   end),
+   awful.key({}, "XF86AudioRaiseVolume", function ()
+     awful.util.spawn("amixer -q -D pulse sset Master 5%+", false)
+     beautiful.volume.update()
+   end),
+   awful.key({}, "XF86AudioMute", function ()
+     awful.util.spawn("amixer -D pulse set Master 1+ toggle", false)
+     beautiful.volume.update()
+   end),
+
+    -- awful.key({ altkey }, "Up",
+    --     function ()
+    --         os.execute(string.format("amixer -q sset %s 1%%+", beautiful.volume.channel))
+    --         beautiful.volume.update()
+    --     end,
+    --     {description = "volume up", group = "hotkeys"}),
+    -- awful.key({ altkey }, "Down",
+    --     function ()
+    --         os.execute(string.format("amixer -q sset %s 1%%-", beautiful.volume.channel))
+    --         beautiful.volume.update()
+    --     end,
+    --     {description = "volume down", group = "hotkeys"}),
+    -- awful.key({ altkey }, "m",
+    --     function ()
+    --         os.execute(string.format("amixer -q set %s 1+ toggle", beautiful.volume.togglechannel or beautiful.volume.channel))
+    --         beautiful.volume.update()
+    --     end,
+    --     {description = "toggle mute", group = "hotkeys"}),
+    -- awful.key({ altkey, "Control" }, "m",
+    --     function ()
+    --         os.execute(string.format("amixer -q set %s 100%%", beautiful.volume.channel))
+    --         beautiful.volume.update()
+    --     end,
+    --     {description = "volume 100%", group = "hotkeys"}),
+    -- awful.key({ altkey, "Control" }, "0",
+    --     function ()
+    --         os.execute(string.format("amixer -q set %s 0%%", beautiful.volume.channel))
+    --         beautiful.volume.update()
+    --     end,
+    --     {description = "volume 0%", group = "hotkeys"}),
 
     -- MPD control
     awful.key({ altkey, "Control" }, "Up",

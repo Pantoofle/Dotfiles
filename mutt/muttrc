@@ -1,13 +1,20 @@
-source ~/.mutt/gpg.rc
+# source ~/.mutt/gpg.rc
+set crypt_use_gpgme = yes
+set pgp_default_key = 0x445F227A101638A2BFA1EE0C3CEFE70BCD766302
+
 source "gpg -dq $HOME/.mutt/passwords.rc.gpg |"
 
 source ~/.mutt/perso.rc
 folder-hook $folder 'source ~/.mutt/perso.rc'
 
+source ~/.mutt/uga.rc
+folder-hook $folder 'source ~/.mutt/uga.rc'
+
 source ~/.mutt/ens.rc
 folder-hook $folder 'source ~/.mutt/ens.rc'
 
 ## Shortcuts to mailboxes
+macro index,pager <F1> '<sync-mailbox><enter-command>source ~/.mutt/uga.rc<enter><change-folder>!<enter>'
 macro index,pager <F2> '<sync-mailbox><enter-command>source ~/.mutt/ens.rc<enter><change-folder>!<enter>'
 macro index,pager <F3> '<sync-mailbox><enter-command>source ~/.mutt/perso.rc<enter><change-folder>!<enter>'
 

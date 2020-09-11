@@ -1,9 +1,4 @@
 ##########################################
-############## Color Scheme ##############
-
-colorscheme desertex
-
-##########################################
 ############## Load pluggins #############
 
 # Plug
@@ -11,31 +6,38 @@ source "%val{config}/plugins/plug.kak/rc/plug.kak"
 
 plug "andreyorst/plug.kak" noload
 
-plug "lenormf/kakoune-extra" load %{
-    cdmenu.kak
+plug "lenormf/kakoune-extra" subset %{
     comnotes.kak
     dictcomplete.kak
-    grepmenu.kak
     hatch_terminal.kak
     idsession.kak
     lineindent.kak
     syntastic.kak
     tldr.kak
     utils.kak
-    # filetype
     git.kak
     mutt.kak
-    pkgbuild.kak
-    # widgets
     git-branch.kak
     percent.kak
 }
 
+plug "alexherbo2/prelude.kak"
 plug "alexherbo2/auto-pairs.kak"
 plug "alexherbo2/connect.kak"
 plug "occivink/kakoune-gdb"
+plug "occivink/kakoune-sudo-write"
 plug "TeddyDD/kakoune-edit-or-dir"
-plug "andreyorst/powerline.kak"
+plug "andreyorst/powerline.kak" config %{
+    powerline-start
+}
+
+# Color scheme
+plug "andreyorst/base16-gruvbox.kak" noload do %{
+    mkdir -p $HOME/.config/kak/colors
+    find $PWD -type f -name "*.kak" -exec ln -sf {} $HOME/.config/kak/colors/ \;
+} config %{
+    colorscheme base16-gruvbox-dark-hard # or any other variant
+}
 
 plug "ul/kak-lsp" do %{
     cargo build --release --locked
@@ -50,7 +52,7 @@ plug "ul/kak-lsp" do %{
 
     define-command lsp-restart -docstring 'restart lsp server' %{ lsp-stop; lsp-start }
 
-    hook global WinSetOption filetype=(c|cpp|rust) %{
+    hook global WinSetOption filetype=(c|cpp|rust|python) %{
         set-option window lsp_auto_highlight_references true
         set-option window lsp_hover_anchor false
         lsp-auto-hover-enable
@@ -94,23 +96,24 @@ set global autowrap_column 80
 set global ui_options ncurses_assistant=none
 
 # Syntastic option
-# set global syntastic_autoformat true
+set global syntastic_autoformat true
 
 #########################################
 ################ Aliases ################
 
 # Spawn a terminal
 #alias global term hatch-terminal-x11
-#alias global terminal x11-terminal
 
 # Prepare IDE
 def ide %{
-    rename-client main
-    set global jumpclient main
-
-    new rename-client tools
+    rename-client tools
     set global toolsclient tools
+
+    new rename-client main
+    set global jumpclient main
 }
+
+
 
 def hard_wrap_selection %{
     exec "|fmt -w %opt{autowrap_column} -g %opt{autowrap_column} -c<ret>"
@@ -176,6 +179,7 @@ hook global InsertChar \t %{ try %{
 
 hook global WinCreate .* %{
     set-option window aligntab false
+    alias global terminal x11-terminal
 }
 
 # Toggle git diff by default
